@@ -13,7 +13,7 @@ const paths = {
     styles: 'dist/styles/**/*.css',
     sass: 'src/sass/**/*.scss',
     images: 'src/images/**/*',
-    html: 'src/views/**/*.pug',
+    views: 'src/views/**/*.pug',
     destroot: "./dist"
 };
 
@@ -66,7 +66,6 @@ gulp.task('copy:images', function () {
 
 gulp.task("copy", ["views", "copy:css", "copy:js", "copy:images"]);
 
-
 gulp.task('views', function buildHTML() {
     return gulp.src('src/views/*.pug')
         .pipe(pug({
@@ -85,7 +84,7 @@ gulp.task('serve', function () {
 
     gulp.watch(paths.sass, ['copy:css']);
     gulp.watch(paths.images, ['copy:images']);
-    gulp.watch(paths.html, ['views']);
+    gulp.watch(paths.views, ['views']);
     gulp.watch(paths.scripts, ['copy:js']).on('change', browserSync.reload);
     gulp.watch("src/views/**/*.pug").on('change', browserSync.reload);
 });
