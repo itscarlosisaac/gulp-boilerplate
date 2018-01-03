@@ -5,14 +5,15 @@ const gulp = require('gulp'),
     clean = require('gulp-clean'),
     sass = require('gulp-sass'),
     browserSync = require('browser-sync').create(),
-    imagemin = require('gulp-imagemin');
+    imagemin = require('gulp-imagemin'),
+    pug = require('gulp-pug');
 
 const paths = {
     scripts: 'src/js/**/*.js',
     styles: 'dist/styles/**/*.css',
     sass: 'src/sass/**/*.scss',
     images: 'src/images/**/*',
-    html: 'src/*.html',
+    html: 'src/views/**/*.pug',
     destroot: "./dist"
 };
 
@@ -44,10 +45,6 @@ gulp.task("clean:images", function (cb) {
 gulp.task("clean", ["clean:js", "clean:css", "clean:html", "clean:images"]);
 
 // Copy Files to Dist
-gulp.task("copy:html", function () {
-    return gulp.src(paths.html)
-        .pipe(gulp.dest(paths.destroot));
-});
 
 gulp.task("copy:css", ['sass'], function () {
     return gulp.src(paths.styles)
@@ -67,7 +64,16 @@ gulp.task('copy:images', function () {
         .pipe(gulp.dest(paths.destroot + '/images'));
 });
 
-gulp.task("copy", ["copy:html", "copy:css", "copy:js", "copy:images"]);
+gulp.task("copy", ["views", "copy:css", "copy:js", "copy:images"]);
+
+
+gulp.task('views', function buildHTML() {
+    return gulp.src('src/views/*.pug')
+        .pipe(pug({
+            pretty: true
+        }))
+        .pipe(gulp.dest(paths.destroot))
+});
 
 // Browser Sync Task
 gulp.task('serve', function () {
@@ -79,9 +85,9 @@ gulp.task('serve', function () {
 
     gulp.watch(paths.sass, ['copy:css']);
     gulp.watch(paths.images, ['copy:images']);
-    gulp.watch(paths.html, ['copy:html']);
+    gulp.watch(paths.html, ['views']);
     gulp.watch(paths.scripts, ['copy:js']).on('change', browserSync.reload);
-    gulp.watch("src/*.html").on('change', browserSync.reload);
+    gulp.watch("src/views/**/*.pug").on('change', browserSync.reload);
 });
 
 gulp.task('default', ['clean', 'copy']);
